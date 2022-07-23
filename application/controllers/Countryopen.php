@@ -14,9 +14,17 @@ class Countryopen extends RestController
 
         header("Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding");
         Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-        Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-        Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
+        // Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
+        // Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
+
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method == "OPTIONS") {
+            die();
+        }
     }
 
 
@@ -220,7 +228,7 @@ where UserCode='" . $UserCode . "'
         // Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
         // Header('Access-Control-Allow-Headers: x-requested-with'); //method allowed
 
-        header('Access-Control-Allow-Origin: htts://mooleh.com');
+        header('Access-Control-Allow-Origin: https://mooleh.com');
         //if you need cookies or login etc
         header('Access-Control-Allow-Credentials: true');
 
@@ -228,7 +236,7 @@ where UserCode='" . $UserCode . "'
         header('Access-Control-Max-Age: 604800');
         //if you need special headers
         header('Access-Control-Allow-Headers: x-requested-with');
-        exit(0);
+
 
 
 
@@ -236,18 +244,71 @@ where UserCode='" . $UserCode . "'
         $CountryCode      = $this->input->get("CountryCode");
         $UserAddressCode      = $this->input->get("UserAddressCode");
 
-
-        $query = $this->db->query("select UserAddressCode,UserAddressType,AddressName,ContactName,a.CountryCode,b.CountryName,a.CityName,
+        $data["header"]   = $this->db->query("select UserAddressCode,UserAddressType,AddressName,ContactName,a.CountryCode,b.CountryName,a.CityName,
         a.Address1,Address2,a.PostalCode,a.PhoneNumber,
         a.Email,a.DistrictCode,a.DistrictName
         from UserAddress a
         inner join Country b on (a.CountryCode=b.CountryCode)
-        where a.UserCode='" . $UserCode . "' and a.CountryCode='" . $CountryCode . "' and a.UserAddressCode='" . $UserAddressCode  . "';")->result();
+        where a.UserCode='" . $UserCode . "' and a.CountryCode='" . $CountryCode . "' and a.UserAddressCode='" . $UserAddressCode  . "'; ")->result();
+
+
+
         $this->response([
             'status' => true,
-            'data' => $query,
+            'data' => $data,
         ], 200);
     }
+
+
+    function useraddresswhere2_post()
+    {
+
+
+
+        $UserCode        = $this->input->post("UserCode");
+        $CountryCode      = $this->input->post("CountryCode");
+        $UserAddressCode      = $this->input->post("UserAddressCode");
+
+        $data["header"]   = $this->db->query("select UserAddressCode,UserAddressType,AddressName,ContactName,a.CountryCode,b.CountryName,a.CityName,
+        a.Address1,Address2,a.PostalCode,a.PhoneNumber,
+        a.Email,a.DistrictCode,a.DistrictName
+        from UserAddress a
+        inner join Country b on (a.CountryCode=b.CountryCode)
+        where a.UserCode='" . $UserCode . "' and a.CountryCode='" . $CountryCode . "' and a.UserAddressCode='" . $UserAddressCode  . "'; ")->result();
+
+
+
+        $this->response([
+            'status' => true,
+            'data' => $data,
+        ], 200);
+    }
+
+    function useraddressupdate_post()
+    {
+
+
+
+        $UserCode        = $this->input->post("UserCode");
+        $AddressOriginCode      = $this->input->post("AddressOriginCode");
+        $AddressDestinationCode      = $this->input->post("AddressDestinationCode");
+
+        $query   = $this->db->query("Call  F_OrderTmpAddressUpdate('" . $UserCode . "','" . $AddressOriginCode . "','" . $AddressDestinationCode . "' ")->result();
+
+        if (!$query) {
+
+            $data =  $this->db->error();
+            $data['status'] = 0;
+            $data['message'] = $query;
+        } else {
+            $this->response([
+                'status' => true,
+                'data' =>  $query,
+            ], 200);
+        }
+    }
+
+
 
     function useraddreswheretype_get()
     {

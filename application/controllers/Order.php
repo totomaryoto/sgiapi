@@ -12,8 +12,12 @@ class Order extends RestController
         $this->load->model("Gate_model");
         $this->load->library('encryption');
 
-        header('Access-Control-Allow-Origin: *');
-        header("Access-Control-Allow-Methods: GET, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Content-Length, Accept-Encoding");
+        Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
+        Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
+        Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
+
+
         $headers = $this->input->request_headers();
         if ($headers['Authorization'] == null) {
             $this->response([
@@ -38,7 +42,84 @@ class Order extends RestController
         }
     }
 
+    function useraddressupdate_post()
+    {
 
+
+
+        $UserCode               = $this->input->post("UserCode");
+        $AddressOriginCode      = $this->input->post("AddressOriginCode");
+        $AddressDestinationCode = $this->input->post("AddressDestinationCode");
+
+        $query   = $this->db->query("Call  F_OrderTmpAddressUpdate('" . $UserCode . "','" . $AddressOriginCode . "','" . $AddressDestinationCode . "') ")->result();
+
+        if (!$query) {
+
+            $data =  $this->db->error();
+            $data['status'] = 0;
+            $data['message'] = $query;
+        } else {
+            $this->response([
+                'status' => true,
+                'data' =>  $query,
+            ], 200);
+        }
+    }
+
+    function userpickupupdate_post()
+    {
+
+
+
+        $UserCode                     = $this->input->post("UserCode");
+        $OrderNote                    = $this->input->post("OrderNote");
+        $PickupTypeCode               = $this->input->post("PickupTypeCode");
+        $DropLocationCode             = $this->input->post("DropLocationCode");
+        $VendorPickupCode             = $this->input->post("VendorPickupCode");
+        $PickupRateCategoryCode       = $this->input->post("PickupRateCategoryCode");
+        $PickupVehicleCode            = $this->input->post("PickupVehicleCode");
+        $PickupScheduleCode            = $this->input->post("PickupScheduleCode");
+        $PickupPrice                  = $this->input->post("PickupPrice");
+
+        $query   = $this->db->query("Call  F_OrderTmpPickupUpdate('" . $UserCode . "','" . $OrderNote    . "','" . $PickupTypeCode . "','" . $DropLocationCode . "',
+                                    '" . $VendorPickupCode . "','" . $PickupRateCategoryCode . "','" . $PickupVehicleCode . "','" . $PickupScheduleCode . "','" . $PickupPrice . "') ")->result();
+
+        if (!$query) {
+
+            $data =  $this->db->error();
+            $data['status'] = 0;
+            $data['message'] = $query;
+        } else {
+            $this->response([
+                'status' => true,
+                'data' =>  $query,
+            ], 200);
+        }
+    }
+
+    function uservoucherpointupdate_post()
+    {
+
+
+
+        $UserCode               = $this->input->post("UserCode");
+        $VoucherCode            = $this->input->post("VoucherCode");
+        $PointUsed              = $this->input->post("PointUsed");
+
+        $query   = $this->db->query("Call  F_OrderTmpVoucherUpdate('" . $UserCode . "','" . $VoucherCode . "','" . $PointUsed . "') ")->result();
+
+        if (!$query) {
+
+            $data =  $this->db->error();
+            $data['status'] = 0;
+            $data['message'] = $query;
+        } else {
+            $this->response([
+                'status' => true,
+                'data' =>  $query,
+            ], 200);
+        }
+    }
 
     function ordertmpupdate_post()
     {

@@ -97,7 +97,7 @@ class Country extends RestController
         }
     }
 
- 
+
 
 
 
@@ -188,7 +188,7 @@ class Country extends RestController
     function pickuptype_get()
     {
 
-        $query = $this->db->query("select PickupTypeCode,PickupTypeNameEN,PickupTypeNameID,PickupTypeFlag from PickupType
+        $query = $this->db->query("select PickupTypeCode,PickupTypeNameID as PickupTypeName,PickupTypeFlag from PickupType
         where PickupTypeStatus=1  ")->result();
         $this->response([
             'status' => true,
